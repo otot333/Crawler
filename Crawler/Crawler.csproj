@@ -53,6 +53,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="11281132.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Test2.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

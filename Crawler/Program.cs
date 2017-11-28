@@ -14,7 +14,7 @@ namespace Crawler
         static void Main(string[] args)
         {
 
-            var filePath = AppDomain.CurrentDomain.BaseDirectory + "Test2.html";
+            var filePath = AppDomain.CurrentDomain.BaseDirectory + "11281132.html";
             //指定來源網頁
             WebClient url = new WebClient();
 
@@ -33,11 +33,9 @@ namespace Crawler
             srReader.Close();
 
 
-            Console.WriteLine(result);
-            //將網頁來源資料暫存到記憶體內
-            //            MemoryStream ms = new MemoryStream(url.DownloadData("http://tw.stock.yahoo.com/q/q?s=1101"));
-            //            //以奇摩股市為例http://tw.stock.yahoo.com
-            //            //1101 表示為股票代碼
+            //Console.WriteLine(result);
+            // MemoryStream ms = new MemoryStream(url.DownloadData("http://www.yahoo.com.tw"));
+       
 
             // 使用預設編碼讀入 HTML 
             HtmlDocument doc = new HtmlDocument();
@@ -45,38 +43,27 @@ namespace Crawler
             doc.LoadHtml(result);
 
             var result2 = doc.DocumentNode.Descendants()
-            .Where(x => x.Attributes.Contains("class")).ToList();
+            .Where(x => x.Attributes.Contains("class") && x.Name =="h5").Select(x =>x.InnerText).ToList();
            
 
-            IEnumerable<HtmlNode> hasFloatClass = doc.DocumentNode
-    .Descendants("h5")
-    .Where(div => div.HasClass("_5pbw _5vra")).ToList();
+            var sharePeople = doc.DocumentNode
+                .Descendants("h5")
+                .Where(x => x.HasClass("_5pbw") && x.HasClass("_5vra"))
+                .Select(x=>x.FirstChild)
+                .Select(x=>x.FirstChild)
+                .Select(x=>x.FirstChild)
+                .Select(x=>x.FirstChild)
+                .Select(x=>x.InnerText).ToList();
+
+            foreach (var item in sharePeople)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine($"公開 分享總人數 : {sharePeople.Count}");
             // 裝載第一層查詢結果 
             HtmlDocument hdc = new HtmlDocument();
 
-            //            //XPath 來解讀它 /html[1]/body[1]/center[1]/table[2]/tr[1]/td[1]/table[1] 
-            //            hdc.LoadHtml(doc.DocumentNode.SelectSingleNode("/html[1]/body[1]/center[1]/table[2]/tr[1]/td[1]/table[1]").InnerHtml);
-
-            //            // 取得個股標頭 
-            //            HtmlNodeCollection htnode = hdc.DocumentNode.SelectNodes("./tr[1]/th");
-            //            // 取得個股數值 
-            //            string[] txt = hdc.DocumentNode.SelectSingleNode("./tr[2]").InnerText.Trim().Split('\n');
-            //            int i = 0;
-
-            //            // 輸出資料 
-            //            foreach (HtmlNode nodeHeader in htnode)
-            //            {
-            //                //將 "加到投資組合" 這個字串過濾掉
-            ////                Response.Write(nodeHeader.InnerText + ":" + txt[i].Trim().Replace("加到投資組合", "") + "
-            ////");
-            ////                i++;
-            //            }
-
-            //            //清除資料
-            //            doc = null;
-            //            hdc = null;
-            //            url = null;
-            //            ms.Close();
+         
             Console.WriteLine("Get Count...");
             Console.ReadLine();
         }
