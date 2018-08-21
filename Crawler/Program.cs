@@ -13,8 +13,9 @@ namespace Crawler
     {
         static void Main(string[] args)
         {
-
-            var filePath = AppDomain.CurrentDomain.BaseDirectory + "11281132.html";
+            var fileName = "下班沒事做色卡";
+            var filePath = AppDomain.CurrentDomain.BaseDirectory + $"{fileName}.html";
+            Console.WriteLine($"Load File : {fileName}");
             //指定來源網頁
             //WebClient url = new WebClient();
             //var fs = new FileStream(filePath,FileMode.Open);
@@ -33,22 +34,28 @@ namespace Crawler
             //Console.WriteLine(result);
             // MemoryStream ms = new MemoryStream(url.DownloadData("http://www.yahoo.com.tw"));
 
+            Console.WriteLine($"Html Parse...");
             // 使用預設編碼讀入 HTML 
             HtmlDocument doc = new HtmlDocument();
             //doc.Load(fs, Encoding.Default);
 
             doc.LoadHtml(htmlText);
             var count = 1;
+            var f1 = doc.DocumentNode
+                .Descendants("h5").Select(x=>x.SelectSingleNode("/span/span/span"));
+            
+
+            var f2 = doc.DocumentNode
+                .Descendants("h5")
+                .Where(x => x.HasClass("_5pbw") && x.HasClass("_5vra"));
+
             var sharePeople = doc.DocumentNode
                 .Descendants("h5")
                 .Where(x => x.HasClass("_5pbw") && x.HasClass("_5vra"))
-                .Select(x=>x.FirstChild)
-                .Select(x=>x.FirstChild)
-                .Select(x=>x.FirstChild)
-                .Select(x=>x.FirstChild)
-                .Select(x=>x.InnerText).Distinct().ToList();
+                .Select(x => x.SelectSingleNode("span/span/span/a"))
+                .Select(x=>x.InnerHtml).Distinct().ToList();
 
-            using (StreamWriter sw = new StreamWriter("SharePeople.txt"))
+            using (StreamWriter sw = new StreamWriter($"SharePeople_{fileName}_{DateTime.Now.Second}.txt"))
             {             
           
                 foreach (var personName in sharePeople)
@@ -61,10 +68,6 @@ namespace Crawler
             }
 
             Console.WriteLine($"公開 分享總人數 : {sharePeople.Count}");
-
-            // 裝載第一層查詢結果 
-            HtmlDocument hdc = new HtmlDocument();
-
          
             Console.WriteLine("Get Count...");
             Console.ReadLine();
